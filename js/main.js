@@ -2,6 +2,10 @@
  * Created by 延松松松松 on 2018/4/8.
  */
 window.onload=function () {
+    var song_list_div =  document.getElementsByClassName("song_list");
+    song_list_div[1].style.display = "none";
+    song_list_div[2].style.display = "none";
+
     var vm = new  Vue({
         el:"#main_body",
         data:{
@@ -13,7 +17,8 @@ window.onload=function () {
 
             ],
             like_songs:[],
-            recent_songs:[]
+            recent_songs:[],
+            player:{}
         },
         methods:{
             add:function () {
@@ -41,7 +46,7 @@ window.onload=function () {
                         var index = this.indexOf(val);
                         if (index > -1) {
                             this.splice(index, 1);
-                            console.log(this.length)
+                   //         console.log(this.length)
                         }
                     };
                     vm.like_songs.remove(vm.all_songs[ind]);
@@ -54,6 +59,36 @@ window.onload=function () {
                     vm.like_songs.push(vm.all_songs[ind]);
                 }
             },
+            play:function () {
+                // console.log(event.target.getAttribute("numb"));
+                var index = event.target.getAttribute("numb");
+                this.player = document.getElementById("media");
+                this.player.src = "mp3/"+vm.all_songs[index].name+".mp3";
+                this.player.play();
+
+                event.target.setAttribute("state_Play","1");
+                playIcon.classList.remove("glyphicon-play");
+                playIcon.classList.add("glyphicon-pause");
+            },
+            changePlayOrPause:function () {
+                var state = event.target.getAttribute("state_Play");
+                var playIcon = document.getElementById("playIcon");
+                if (state==0){
+                    event.target.setAttribute("state_Play","1");
+                    playIcon.classList.remove("glyphicon-play");
+                    playIcon.classList.add("glyphicon-pause");
+
+                    this.player.play();
+                }else {
+                    event.target.setAttribute("state_Play","0");
+                    playIcon.classList.remove("glyphicon-pause");
+                    playIcon.classList.add("glyphicon-play");
+                    this.player.pause();
+                }
+            },
+            toggleDiv:function () {
+
+            }
         }
     });
 
