@@ -6,6 +6,7 @@ window.onload=function () {
     song_list_div[1].style.display = "none";
     song_list_div[2].style.display = "none";
 
+
     var vm = new  Vue({
         el:"#main_body",
         data:{
@@ -18,9 +19,12 @@ window.onload=function () {
             ],
             like_songs:[],
             recent_songs:[],
-            player:{}
+            player:{},
+            songindex:0,
+            duration:0
         },
         methods:{
+
             add:function () {
                 // console.log(event.target);
                 console.log("这是第"+event.target.getAttribute("keyui")+"个按钮");
@@ -65,10 +69,14 @@ window.onload=function () {
                 this.player = document.getElementById("media");
                 this.player.src = "mp3/"+vm.all_songs[index].name+".mp3";
                 this.player.play();
-
+                this.songindex = index;
+                // console.log(this.songindex);
                 event.target.setAttribute("state_Play","1");
                 playIcon.classList.remove("glyphicon-play");
                 playIcon.classList.add("glyphicon-pause");
+
+            //    下面是获取播放时间
+                this.duration = this.player.duration;
             },
             changePlayOrPause:function () {
                 var state = event.target.getAttribute("state_Play");
@@ -87,11 +95,38 @@ window.onload=function () {
                 }
             },
             toggleDiv:function () {
+                $("#like_songlist").fadeToggle("slow");
+            },
+            nextSong:function () {
+                console.log(this.songindex);
+                this.songindex = ++this.songindex%this.all_songs.length;
 
+                this.player.src = "mp3/"+vm.all_songs[this.songindex].name+".mp3";
+                console.log(this.songindex);
+                this.player.play();
+                if (this.songindex!=0){
+                    document.getElementById("lastsong_btn").classList.remove("disabled");
+                }else if (this.songindex==0){
+                    document.getElementById("lastsong_btn").classList.add("disabled");
+                }
+            },
+            lastSong:function () {
+
+                console.log("切换前index为"+this.songindex);
+                this.songindex = --this.songindex;
+                console.log("切换后index为"+this.songindex);
+                this.player.src = "mp3/"+vm.all_songs[this.songindex].name+".mp3";
+                this.player.play();
+                if (this.songindex==0){
+                    document.getElementById("lastsong_btn").classList.add("disabled");
+                }
             }
         }
     });
 
+    // $("#test").click =function () {
+    //     $("#like_songlist").fadeToggle("slow");
+    // }
 
 
 };

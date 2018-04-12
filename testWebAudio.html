@@ -37,6 +37,8 @@
             media.pause();
             $('#play').html('Play');
         }
+        myVid=document.getElementById("media");
+//        alert(myVid.duration);
     }
 </script>
 <body>
@@ -45,6 +47,24 @@
         <span id="play">Play</span>
     </div>
 </div>
-<audio id="media" src="mp3/红玫瑰.mp3"></audio>
+<audio controls="true" id="media"   onplay="this.currentTime=5" autoplay src="mp3/红玫瑰.mp3" ></audio>
+
 </body>
+<script>
+    $(audio).on('loadedmetadata', function() {
+        audio.pause();
+        // 进度条控制
+        $(document).on('touchend', '.timeline', function(e) {
+//            var x = e.originalEvent.changedTouches[0].clientX - this.offsetLeft;
+//            var X = x < 0 ? 0 : x;
+//            var W = $(this).width();
+//            var place = X > W ? W : X;
+            audio.currentTime = 6;
+//            $(this).children().css({
+//                width: (place / W).toFixed(2) * 100 + "%"
+//            })
+            audio.pause();
+        })
+
+</script>
 </html>

@@ -42,7 +42,7 @@
                                 <!--           点击心之后 删除glyphicon-heart-empty类 添加glyphicon-heart类        style="color: rgb(255, 42, 0);"                 -->
                             </ul>
                         </div>
-                    <li class="cursor_pointer "><a>我喜欢的</a></li>
+                    <li class="cursor_pointer " id="test" @click = "toggleDiv()"><a >我喜欢的</a></li>
                         <div id="like_songlist" class="song_list">
                             <ul v-for="value in like_songs">
                                 <li>{{value.name}}</li>
@@ -101,14 +101,14 @@
                         <button class="btn btn-info"><span class="glyphicon glyphicon-forward"></span></button>
                     </div>
                     <div class=" btn-group btn-group-sm ">
-                        <button class="btn btn-info"><span class="glyphicon glyphicon-fast-backward"></span></button>
-                        <button class="btn btn-info" @click = "changePlayOrPause" :state_Play = "0"><span id="playIcon" class="glyphicon glyphicon-play"></span></button>
+                        <button id="lastsong_btn" @click = "lastSong()" class="btn btn-info"><span class="glyphicon glyphicon-fast-backward"></span></button>
+                        <button  class="btn btn-info" @click = "changePlayOrPause" :state_Play = "0"><span id="playIcon" class="glyphicon glyphicon-play"></span></button>
                         <!--     当点了播放之后  添加glyphicon-pause类 删除   glyphicon-play类   -->
-                        <button class="btn btn-info"><span class="glyphicon glyphicon-fast-forward"></span></button>
+                        <button id="nextsong_btn" class="btn btn-info" @click = "nextSong()"><span class="glyphicon glyphicon-fast-forward"></span></button>
                     </div>
 
                     <input id="SongRange" type="range">
-                    <p class="label label-primary" style="display: inline-block;font-size: small"><span >1:30</span><span>/</span><span>3:25</span></p>
+                    <p class="label label-primary" style="display: inline-block;font-size: small"><span >1:30</span><span>/</span><span>{{duration}}</span></p>
                     &nbsp;
                     <input id="voiceRange" type="range" style="width: 20%">
 
