@@ -21,7 +21,8 @@ window.onload=function () {
             recent_songs:[],
             player:{},
             songindex:0,
-            duration:0
+            duration: "3.35",
+            currentTime:"1:05"
         },
         methods:{
 
@@ -75,8 +76,23 @@ window.onload=function () {
                 playIcon.classList.remove("glyphicon-play");
                 playIcon.classList.add("glyphicon-pause");
 
+
+
+                // this.duration  = this.player.duration
             //    下面是获取播放时间
-                this.duration = this.player.duration;
+                var b = this.player;
+                //由于音乐需要加载 所以必须等到 canplay 才能获取到duration
+                b.addEventListener("canplay",function () {
+                    var bt = b.duration
+
+                    vm.duration =Math.floor(bt/60)+":"+(bt%60/100).toFixed(2).slice(-2);
+                    setInterval(function () {
+                        var ct = b.currentTime;
+                        vm.currentTime = Math.floor(ct/60)+":"+(ct%60/100).toFixed(2).slice(-2);
+                        console.log(ct+","+vm.currentTime)
+                    },1000)
+                })
+
             },
             changePlayOrPause:function () {
                 var state = event.target.getAttribute("state_Play");
