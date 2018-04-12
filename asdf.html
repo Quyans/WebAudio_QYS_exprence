@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<audio id="b"   src="mp3/红玫瑰.mp3"  controls  >
+
+    <!--<source type="audio/mpeg">-->
+</audio>
+<button id="play">播放</button>
+<button id="btn">跳转</button>
+<button id="range">显示可寻址范围</button>
+<script>
+    window.onload = function () {
+        var play = document.getElementById("play");
+        var btn = document.getElementById("btn");
+        var showrange = document.getElementById("range");
+        var v = document.getElementById("b");
+        play.onclick = function () {
+            v.play()
+        }
+        btn.onclick =function () {
+
+//            v.play()
+           v.currentTime = 20;
+
+
+        }
+//        v.addEventListener("canplay",function () {
+//            btn.onclick = function () {
+//                v.play();
+//            }
+//               v.pause();
+//            v.currentTime = 10.0;
+//            v.play();
+//        })
+        showrange.onclick = function () {
+            var b = "asdfa";
+            console.log(v.seekable.start(0)+","+v.seekable.end(0));
+//            for(var a = 0;a<v.seekable.start.length;a++){
+//                console.log(a+"起始时间"+v.seekable.start(a)+"结束时间"+v.seekable.end(a))
+//                }
+        }
+    }
+
+//    v.addEventListener("seeked", function() { document.getElementsByTagName("video")[0].play(); }, true);
+
+</script>
+</body>
+</html>

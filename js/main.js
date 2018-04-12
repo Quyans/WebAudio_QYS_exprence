@@ -21,8 +21,12 @@ window.onload=function () {
             recent_songs:[],
             player:{},
             songindex:0,
-            duration: "3.35",
-            currentTime:"1:05"
+            duration: "0:00",
+            currentTime:"0:00",
+            voice_volume:0,
+
+            int_voice:0,
+            int_time:1
         },
         methods:{
 
@@ -66,6 +70,7 @@ window.onload=function () {
             },
             play:function () {
                 // console.log(event.target.getAttribute("numb"));
+                window.clearInterval(vm.int_time);
                 var index = event.target.getAttribute("numb");
                 this.player = document.getElementById("media");
                 this.player.src = "mp3/"+vm.all_songs[index].name+".mp3";
@@ -86,15 +91,18 @@ window.onload=function () {
                     var bt = b.duration
 
                     vm.duration =Math.floor(bt/60)+":"+(bt%60/100).toFixed(2).slice(-2);
-                    setInterval(function () {
+                    vm.int_time = setInterval(function () {
                         var ct = b.currentTime;
+                        console.log(ct);
+
                         vm.currentTime = Math.floor(ct/60)+":"+(ct%60/100).toFixed(2).slice(-2);
-                        console.log(ct+","+vm.currentTime)
+                        // console.log(ct+","+vm.currentTime)
                     },1000)
                 })
 
             },
             changePlayOrPause:function () {
+
                 var state = event.target.getAttribute("state_Play");
                 var playIcon = document.getElementById("playIcon");
                 if (state==0){
@@ -102,8 +110,18 @@ window.onload=function () {
                     playIcon.classList.remove("glyphicon-play");
                     playIcon.classList.add("glyphicon-pause");
 
+
+                    var b = this.player;
                     this.player.play();
+                    vm.int_time = setInterval(function () {
+                        var ct = b.currentTime;
+                        console.log(ct);
+
+                        vm.currentTime = Math.floor(ct/60)+":"+(ct%60/100).toFixed(2).slice(-2);
+                        // console.log(ct+","+vm.currentTime)
+                    },1000)
                 }else {
+                    window.clearInterval(vm.int_time);
                     event.target.setAttribute("state_Play","0");
                     playIcon.classList.remove("glyphicon-pause");
                     playIcon.classList.add("glyphicon-play");
@@ -114,6 +132,7 @@ window.onload=function () {
                 $("#like_songlist").fadeToggle("slow");
             },
             nextSong:function () {
+                window.clearInterval(vm.int_time);
                 console.log(this.songindex);
                 this.songindex = ++this.songindex%this.all_songs.length;
 
@@ -127,7 +146,7 @@ window.onload=function () {
                 }
             },
             lastSong:function () {
-
+                window.clearInterval(vm.int_time);
                 console.log("切换前index为"+this.songindex);
                 this.songindex = --this.songindex;
                 console.log("切换后index为"+this.songindex);
@@ -136,9 +155,30 @@ window.onload=function () {
                 if (this.songindex==0){
                     document.getElementById("lastsong_btn").classList.add("disabled");
                 }
+            },
+            chageVoice_volume_setInterval : function (event) {
+                 vm.int_voice = setInterval(function () {
+                    var value = document.getElementById("voiceRange").value;
+                    //  console.log(event)
+                    //   console.log(value);
+                    vm.voice_volume = value/100;
+                    vm.player.volume = vm.voice_volume;
+                    console.log(vm.player.volume)
+                },100)
+
+                // var value = document.getElementById("voiceRange").value;
+                // //  console.log(event)
+                // //   console.log(value);
+                // vm.voice_volume = value/100;
+                // vm.player.volume = vm.voice_volume;
+            },
+            chageVoice_volume_clearInterval : function () {
+                window.clearInterval(vm.int_voice);
             }
+
         }
     });
+
 
     // $("#test").click =function () {
     //     $("#like_songlist").fadeToggle("slow");

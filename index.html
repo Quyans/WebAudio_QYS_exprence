@@ -110,10 +110,10 @@
                     <input id="SongRange" type="range">
                     <p class="label label-primary" style="display: inline-block;font-size: small"><span >{{currentTime}}</span><span>/</span><span >{{duration}}</span></p>
                     &nbsp;
-                    <input id="voiceRange" type="range" style="width: 20%">
+                    <input id="voiceRange" @mousedown = "chageVoice_volume_setInterval()" @mouseup = "chageVoice_volume_clearInterval()" type="range"  style="width: 20%">
 
 
-                    <audio id="media" src=""></audio>
+                    <audio id="media" src=""   ></audio>
 
                 </div>
             </div>
