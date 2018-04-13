@@ -1,12 +1,13 @@
 html{
     height: 100%;
-    min-width: 900px;
+    min-width: 1000px;
 }
 body{
    /*//height: auto;*/
     background-image:url("../images/frontend-background_blurred2.jpg");
     background-size: cover;
     margin: 0;
+    min-width: 1000px;
 
 }
 input[type="range"] {
@@ -65,4 +66,7 @@ input[type="range"]::-webkit-slider-thumb {
 }
 .li_radios >li>a{
     border-radius: 50px;
+}
+.margin_center{
+    margin: 0  auto;
 }

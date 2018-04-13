@@ -6,7 +6,6 @@ window.onload=function () {
     song_list_div[1].style.display = "none";
     song_list_div[2].style.display = "none";
 
-
     var vm = new  Vue({
         el:"#main_body",
         data:{
@@ -22,12 +21,16 @@ window.onload=function () {
             player:{},
             songindex:0,
             duration: "0:00",
+            duration_ZhunQue:0,
             currentTime:"0:00",
             voice_volume:0,
             music_volume:0,
+            song_title:null,
+            playbackRate:1,
+
 
             int_voice:0,
-            int_time:1
+            int_time:2
         },
         methods:{
 
@@ -71,13 +74,15 @@ window.onload=function () {
             },
             play:function () {
                 // console.log(event.target.getAttribute("numb"));
-
+                console.log("当前int"+ vm.int_time);
+                // window.clearInterval(vm.int_time);
                 var index = event.target.getAttribute("numb");
-                this.player = document.getElementById("media");
-                this.player.src = "mp3/"+vm.all_songs[index].name+".mp3";
-                this.player.play();
-                this.songindex = index;
-                // console.log(this.songindex);
+                vm.player = document.getElementById("media");
+                vm.player.src = "mp3/"+vm.all_songs[index].name+".mp3";
+                vm.song_title = vm.all_songs[index].name
+                vm.player.play();
+                vm.songindex = index;
+
                 event.target.setAttribute("state_Play","1");
                 playIcon.classList.remove("glyphicon-play");
                 playIcon.classList.add("glyphicon-pause");
@@ -86,18 +91,23 @@ window.onload=function () {
 
                 // this.duration  = this.player.duration
             //    下面是获取播放时间
-                var b = this.player;
+                var b = vm.player;
                 //由于音乐需要加载 所以必须等到 canplay 才能获取到duration
                 b.addEventListener("canplay",function () {
+                    console.log(vm.int_time);
+
                     var bt = b.duration;
+                    console.log(bt);
+                    vm.duration_ZhunQue = bt;
                     vm.duration =Math.floor(bt/60)+":"+(bt%60/100).toFixed(2).slice(-2);
+                    // console.log(vm.duration);
                     vm.int_time = setInterval(function () {
-                        var ct = b.currentTime;
-                       console.log(ct + ","+ vm.int_time) ;
-                        vm.currentTime = Math.floor(ct/60)+":"+(ct%60/100).toFixed(2).slice(-2);
-                        vm.music_volume = (ct/bt)*100;
+                         console.log("setInterval之后 的int是"+vm.int_time)
+                        vm.AutoChangeMusic_volumn(b,bt);
                         // console.log(ct+","+vm.currentTime)
                     },1000);
+
+                    // window.clearInterval(vm.int_time);
 
                     //**************监听 int_time 当他发生变化的时候（即切歌） clearInterval 之前的
                     vm.$watch("int_time",function () {
@@ -105,8 +115,14 @@ window.onload=function () {
                     })
                     // window.clearInterval(vm.int_time);
                 })
-
-
+            },
+            AutoChangeMusic_volumn:function(b,bt){
+                var ct = b.currentTime;
+                bt = b.duration
+                console.log( ","+ vm.int_time) ;
+                vm.currentTime = Math.floor(ct/60)+":"+(ct%60/100).toFixed(2).slice(-2);
+                vm.music_volume = (ct/bt)*100;
+                console.log("被除数duration为"+ bt);
             },
             changePlayOrPause:function () {
                 // window.clearInterval(vm.int_time);
@@ -138,7 +154,7 @@ window.onload=function () {
                 $("#like_songlist").fadeToggle("slow");
             },
             nextSong:function () {
-                window.clearInterval(vm.int_time);
+                // window.clearInterval(vm.int_time);
                 console.log(this.songindex);
                 this.songindex = ++this.songindex%this.all_songs.length;
 
@@ -171,7 +187,6 @@ window.onload=function () {
                     vm.player.volume = vm.voice_volume;
                     console.log(vm.player.volume);
                 },100);
-
                 // var value = document.getElementById("voiceRange").value;
                 // //  console.log(event)
                 // //   console.log(value);
@@ -181,10 +196,23 @@ window.onload=function () {
             chageVoice_volume_clearInterval : function () {
                 window.clearInterval(vm.int_voice);
             },
-            // cleatInterval_music:function () {
-            //     window.clearInterval(vm.int_time);
-            // }
+            change_music_volume:function () {
+                var bt = vm.player.duration;
+                // console.log("当前duration"+ bt)
+                vm.music_volume = document.getElementById("SongRange").value;
+                vm.player.currentTime = (vm.music_volume/100)*bt
+            },
+            quickly:function () {
+            //    快速播放
+                vm.player.playbackRate = 1.5;
+            },
+            slowly:function () {
+                //慢速播放
+                vm.player.playbackRate = 0.5;
+            }
+
         }
+
     });
 
 
