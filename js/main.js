@@ -209,7 +209,26 @@ window.onload=function () {
             slowly:function () {
                 //慢速播放
                 vm.player.playbackRate = 0.5;
+            },
+            change_speed:function () {
+                var option = document.getElementById("select_speed").value;
+                var speed;
+                if (option=="正常"){
+                    speed = 1;
+                }else if (option=="0.8倍速")
+                {
+                    speed = 0.8;
+                }else if (option=="1.2倍速")
+                {
+                    speed = 1.2;
+                }else if (option=="1.5倍速")
+                {
+                    speed = 1.5;
+                }
+                // alert(option);
+                vm.player.playbackRate = speed;
             }
+
 
         }
 

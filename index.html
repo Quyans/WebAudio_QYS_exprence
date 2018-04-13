@@ -32,7 +32,7 @@
 <!--**********************以下为主体部分***********************************-->
     <div id="main_body">
         <div class="container">
-            <div class="col-sm-3">
+            <div class="col-lg-3">
                 <ul class="nav nav-pills nav-stacked left-lan-font li_center li_radios">
                     <li class="active cursor_pointer"><a>全部歌曲</a></li>
                         <div id="all_songlist" class="song_list">
@@ -58,7 +58,7 @@
             </div>
 
             <!--这里是播放器界面-->
-            <div class="col-sm-9">
+            <div class="col-lg-9">
                 <div class="">
                     <div class="col-sm-4 margin_center"style="text-align: center" >
                         <span v-text="song_title"  class="h3" ></span>
@@ -92,14 +92,21 @@
                     </div>
                 </div>
 
-                <!--这里是滑条的区域-->
-                <div class="btn-toolbar">
-                    <div class=" btn-group btn-group-sm">
-                        <button class="btn btn-info" @click = "slowly()"><span class="glyphicon glyphicon-backward"></span></button>
+                <!--这里是滑条的区域.-->
+                <div class="btn-toolbar"  >
+                    <!--<div class=" btn-group btn-group-sm">-->
+                        <!--&lt;!&ndash;<button class="btn btn-info" @click = "slowly()"><span class="glyphicon glyphicon-backward"></span></button>&ndash;&gt;-->
 
 
-                        <button class="btn btn-info" @click = "quickly()"><span class="glyphicon glyphicon-forward"></span></button>
-                    </div>
+                        <!--&lt;!&ndash;<button class="btn btn-info" @click = "quickly()"><span class="glyphicon glyphicon-forward"></span></button>&ndash;&gt;-->
+                        <!---->
+                    <!--</div>-->
+                    <select id="select_speed" @change = "change_speed()" class="form-control select_group ">
+                        <option >正常</option>
+                        <option >0.8倍速</option>
+                        <option >1.2倍速</option>
+                        <option >1.5倍速</option>
+                    </select>
                     <div class=" btn-group btn-group-sm ">
                         <button id="lastsong_btn" @click = "lastSong()" class="btn btn-info"><span class="glyphicon glyphicon-fast-backward"></span></button>
                         <button  class="btn btn-info" @click = "changePlayOrPause" :state_Play = "0"><span id="playIcon" class="glyphicon glyphicon-play"></span></button>

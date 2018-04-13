@@ -70,3 +70,11 @@ input[type="range"]::-webkit-slider-thumb {
 .margin_center{
     margin: 0  auto;
 }
+.select_group{
+    width: 110px;
+    display: inline-block;
+    float: left;
+    height:31px;
+    padding: 4px 12px;
+    margin-right: 10px;
+}
