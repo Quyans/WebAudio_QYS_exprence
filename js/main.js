@@ -24,6 +24,7 @@ window.onload=function () {
             duration: "0:00",
             currentTime:"0:00",
             voice_volume:0,
+            music_volume:0,
 
             int_voice:0,
             int_time:1
@@ -70,7 +71,7 @@ window.onload=function () {
             },
             play:function () {
                 // console.log(event.target.getAttribute("numb"));
-                window.clearInterval(vm.int_time);
+
                 var index = event.target.getAttribute("numb");
                 this.player = document.getElementById("media");
                 this.player.src = "mp3/"+vm.all_songs[index].name+".mp3";
@@ -88,28 +89,33 @@ window.onload=function () {
                 var b = this.player;
                 //由于音乐需要加载 所以必须等到 canplay 才能获取到duration
                 b.addEventListener("canplay",function () {
-                    var bt = b.duration
-
+                    var bt = b.duration;
                     vm.duration =Math.floor(bt/60)+":"+(bt%60/100).toFixed(2).slice(-2);
                     vm.int_time = setInterval(function () {
                         var ct = b.currentTime;
-                        console.log(ct);
-
+                       console.log(ct + ","+ vm.int_time) ;
                         vm.currentTime = Math.floor(ct/60)+":"+(ct%60/100).toFixed(2).slice(-2);
+                        vm.music_volume = (ct/bt)*100;
                         // console.log(ct+","+vm.currentTime)
-                    },1000)
+                    },1000);
+
+                    //**************监听 int_time 当他发生变化的时候（即切歌） clearInterval 之前的
+                    vm.$watch("int_time",function () {
+                        window.clearInterval(vm.int_time);
+                    })
+                    // window.clearInterval(vm.int_time);
                 })
+
 
             },
             changePlayOrPause:function () {
-
+                // window.clearInterval(vm.int_time);
                 var state = event.target.getAttribute("state_Play");
                 var playIcon = document.getElementById("playIcon");
                 if (state==0){
                     event.target.setAttribute("state_Play","1");
                     playIcon.classList.remove("glyphicon-play");
                     playIcon.classList.add("glyphicon-pause");
-
 
                     var b = this.player;
                     this.player.play();
@@ -121,7 +127,7 @@ window.onload=function () {
                         // console.log(ct+","+vm.currentTime)
                     },1000)
                 }else {
-                    window.clearInterval(vm.int_time);
+                   // window.clearInterval(vm.int_time);
                     event.target.setAttribute("state_Play","0");
                     playIcon.classList.remove("glyphicon-pause");
                     playIcon.classList.add("glyphicon-play");
@@ -163,8 +169,8 @@ window.onload=function () {
                     //   console.log(value);
                     vm.voice_volume = value/100;
                     vm.player.volume = vm.voice_volume;
-                    console.log(vm.player.volume)
-                },100)
+                    console.log(vm.player.volume);
+                },100);
 
                 // var value = document.getElementById("voiceRange").value;
                 // //  console.log(event)
@@ -174,8 +180,10 @@ window.onload=function () {
             },
             chageVoice_volume_clearInterval : function () {
                 window.clearInterval(vm.int_voice);
-            }
-
+            },
+            // cleatInterval_music:function () {
+            //     window.clearInterval(vm.int_time);
+            // }
         }
     });
 

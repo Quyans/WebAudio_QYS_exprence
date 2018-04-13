@@ -38,7 +38,7 @@
                         <div id="all_songlist" class="song_list">
                             <ul v-for="(value,index) in all_songs">
                                 <!--<li >{{value.name}}</li><button @click = "add()"  :keyui = "index"><span @click = "add()"  :keyui = "index" class="glyphicon glyphicon-heart-empty"></span></button>-->
-                                <li ><span class="cursor_pointer" @click = "play()" :numb = "index">{{value.name}}</span> <span @click = "add()"   :keyui = "index" class="small_heart glyphicon glyphicon-heart-empty float_rignt"  :state_choose = 0></span></li>
+                                <li ><span class="cursor_pointer"   @mouseup = "play()" :numb = "index">{{value.name}}</span> <span @click = "add()"   :keyui = "index" class="small_heart glyphicon glyphicon-heart-empty float_rignt"  :state_choose = 0></span></li>
                                 <!--           点击心之后 删除glyphicon-heart-empty类 添加glyphicon-heart类        style="color: rgb(255, 42, 0);"                 -->
                             </ul>
                         </div>
@@ -107,7 +107,7 @@
                         <button id="nextsong_btn" class="btn btn-info" @click = "nextSong()"><span class="glyphicon glyphicon-fast-forward"></span></button>
                     </div>
 
-                    <input id="SongRange" type="range">
+                    <input id="SongRange" type="range" :value="music_volume">
                     <p class="label label-primary" style="display: inline-block;font-size: small"><span >{{currentTime}}</span><span>/</span><span >{{duration}}</span></p>
                     &nbsp;
                     <input id="voiceRange" @mousedown = "chageVoice_volume_setInterval()" @mouseup = "chageVoice_volume_clearInterval()" type="range"  style="width: 20%">
