@@ -111,6 +111,10 @@ window.onload=function () {
                 vm.player.play();
                 vm.songindex = index;
 
+                //下面这个方法调用了显示歌词的调用
+                vm.ShowLrc(vm.song_title);
+
+
                 event.target.setAttribute("state_Play","1");
                 playIcon.classList.remove("glyphicon-play");
                 playIcon.classList.add("glyphicon-pause");
@@ -263,30 +267,50 @@ window.onload=function () {
             //下面的方法是用来解析歌词并且显示当前歌曲的歌词
             ShowLrc:function (url) {
                 //首先需要清空当前ul的内容
-                // document.getElementById("lrc_list").innerHTML = "";
+                document.getElementById("lrc_list").innerHTML = "";
                 $.ajax({
                     url:"lrc/"+url+".lrc",
                     success:function (lrc) {
-        //        console.log(lrc);
-                        var p = parseLyric(lrc);
+//        console.log(lrc);
+                        var p = parseLyric(lrc)
+                        lrc = p;
+//        console.log(p) ;
+//        console.log(p[16]);
+//        console.log(p[1])
+//        console.log(typeof (p[1]))
 
-                        for(var a = 0;a<50;a++) {
+
+
+                        for(var a = 0;a<360;a++) {
 
 //            console.log(typeof (lrc[1]));
                             if (typeof (lrc[a]) == "undefined") {
 //                alert(1);
                                 continue;
                             }
+                            var ul =document.getElementById("lrc_list")
                             var li = document.createElement("li");
                             li.innerText = lrc[a];
 //                console.log(li);
 
-                            document.getElementById("138test").appendChild(li);
-                            // console.log(li);
-                        }
+                            ul.appendChild(li);
 
+                        }
                     }
                 })
+
+
+                var li  = document.createElement("LI");
+                var textnode= document.createTextNode("123");
+                li.appendChild(textnode);
+                document.getElementById("myList").appendChild(li);
+                console.log(li);
+
+
+                var node=document.createElement("LI");
+                var textnode=document.createTextNode("Water");
+                node.appendChild(textnode);
+                document.getElementById("myList").appendChild(node);
             }
 
         }
