@@ -11,6 +11,17 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/main.css">
 
+<style>
+
+    /**{margin:0px;padding:0px;}*/
+    /*body{width:100%;height:100%;overflow:hidden;}*/
+    /*.box{margin:100px auto 0 auto;width:400px;}*/
+    /*.lrc{position:relative;width:300px;height:200px;overflow-y:auto;background-color:#ccc}*/
+    /*.lrc li{display:block;padding:5px 0;}*/
+    /*.z-crt{color:#0f0;}*/
+    /*.ctrl{margin:0 auto;padding-left:100px;width:300px;}*/
+
+</style>
 
 
 </head>
@@ -18,6 +29,7 @@
 
 <!--******************************以下为导航栏*****************************-->
     <div class="navbar navbar-default navbar_myself">
+
         <div class="container">
             <div   class="navbar-header">
                 <a href="#" class="navbar-brand ">WebAudio</a>
@@ -31,8 +43,9 @@
 
 <!--**********************以下为主体部分***********************************-->
     <div id="main_body">
+
         <div class="container">
-            <div class="col-lg-3">
+            <div class="col-md-3">
                 <ul class="nav nav-pills nav-stacked left-lan-font li_center li_radios">
                     <li class="active cursor_pointer"><a>全部歌曲</a></li>
                         <div id="all_songlist" class="song_list">
@@ -58,42 +71,23 @@
             </div>
 
             <!--这里是播放器界面-->
-            <div class="col-lg-9">
+            <div class="col-md-9">
                 <div class="">
-                    <div class="col-sm-4 margin_center"style="text-align: center" >
+                    <div class="col-xs-4 margin_center"style="text-align: center" >
                         <span v-text="song_title"  class="h3" ></span>
                     </div>
-                    <div class="col-sm-8">
-                        <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias at atque consequuntur,
-                            cumque distinctio doloribus est exercitationem expedita hic, impedit nisi officiis
-                            perspiciatis, placeat porro praesentium quo rerum sed veritatis!
-                        </div>
-                        <div>Alias aliquam architecto blanditiis culpa cupiditate dicta dignissimos distinctio dolores
-                            eligendi est, ex illo iusto magni maxime mollitia nihil officiis, optio porro quam quas
-                            quisquam sequi, soluta totam veniam vero.
-                        </div>
-                        <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias at atque consequuntur,
-                            cumque distinctio doloribus est exercitationem expedita hic, impedit nisi officiis
-                            perspiciatis, placeat porro praesentium quo rerum sed veritatis!
-                        </div>
-                        <div>Alias aliquam architecto blanditiis culpa cupiditate dicta dignissimos distinctio dolores
-                            eligendi est, ex illo iusto magni maxime mollitia nihil officiis, optio porro quam quas
-                            quisquam sequi, soluta totam veniam vero.
-                        </div>
-                        <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias at atque consequuntur,
-                            cumque distinctio doloribus est exercitationem expedita hic, impedit nisi officiis
-                            perspiciatis, placeat porro praesentium quo rerum sed veritatis!
-                        </div>
-                        <div>Alias aliquam architecto blanditiis culpa cupiditate dicta dignissimos distinctio dolores
-                            eligendi est, ex illo iusto magni maxime mollitia nihil officiis, optio porro quam quas
-                            quisquam sequi, soluta totam veniam vero.
-                        </div>
+                    <div class="col-xs-8 " style="height: 320px;">
+                        <ul id="lrc_list"></ul>
+
+
+
 
                     </div>
                 </div>
 
                 <!--这里是滑条的区域.-->
                 <div class="btn-toolbar"  >
+
                     <!--<div class=" btn-group btn-group-sm">-->
                         <!--&lt;!&ndash;<button class="btn btn-info" @click = "slowly()"><span class="glyphicon glyphicon-backward"></span></button>&ndash;&gt;-->
 
@@ -117,13 +111,89 @@
                     <input id="SongRange" type="range" @change = "change_music_volume()" :value="music_volume">
                     <p class="label label-primary" style="display: inline-block;font-size: small"><span >{{currentTime}}</span><span>/</span><span >{{duration}}</span></p>
                     &nbsp;
-                    <input id="voiceRange" @mousedown = "chageVoice_volume_setInterval()" @mouseup = "chageVoice_volume_clearInterval()" type="range"  style="width: 20%">
+                    <input id="voiceRange" @mousedown = "chageVoice_volume_setInterval()" @mouseup = "chageVoice_volume_clearInterval()" type="range"  style="width: 15%">
 
                     <audio id="media" src=""   loop="loop" ></audio>
 
+
                 </div>
             </div>
+
         </div>
     </div>
+<ul id="138test"></ul>
+
+
+
 </body>
+<script>
+
+    var lrc;
+    function parseLyric(lrc) {
+        var lyrics = lrc.split("\n");
+        for (var value in lyrics){
+//            console.log(value)
+        }
+        var lrcObj = {};
+        for(var i=0;i<lyrics.length;i++){
+            var lyric = decodeURIComponent(lyrics[i]);
+            var timeReg = /\[\d*:\d*((\.|\:)\d*)*\]/g;
+            var timeRegExpArr = lyric.match(timeReg);
+            if(!timeRegExpArr)continue;
+            var clause = lyric.replace(timeReg,'');
+            for(var k = 0,h = timeRegExpArr.length;k < h;k++) {
+                var t = timeRegExpArr[k];
+                var min = Number(String(t.match(/\[\d*/i)).slice(1)),
+                    sec = Number(String(t.match(/\:\d*/i)).slice(1));
+                var time = min * 60 + sec;
+                lrcObj[time] = clause;
+            }
+        }
+        return lrcObj;
+    }
+    $.ajax({
+        url:"lrc/红玫瑰.lrc",
+        success:function (lrc) {
+//        console.log(lrc);
+            var p = parseLyric(lrc)
+            lrc = p;
+//        console.log(p) ;
+//        console.log(p[16]);
+//        console.log(p[1])
+//        console.log(typeof (p[1]))
+
+
+
+            for(var a = 0;a<360;a++) {
+
+//            console.log(typeof (lrc[1]));
+                if (typeof (lrc[a]) == "undefined") {
+//                alert(1);
+                    continue;
+                }
+                var ul =document.getElementById("lrc_list")
+                var li = document.createElement("li");
+                li.innerText = lrc[a];
+//                console.log(li);
+
+                ul.appendChild(li);
+
+            }
+        }
+    })
+
+
+    var li  = document.createElement("LI");
+    var textnode= document.createTextNode("123");
+    li.appendChild(textnode);
+    document.getElementById("myList").appendChild(li);
+    console.log(li);
+
+
+    var node=document.createElement("LI");
+    var textnode=document.createTextNode("Water");
+    node.appendChild(textnode);
+    document.getElementById("myList").appendChild(node);
+
+</script>
 </html>

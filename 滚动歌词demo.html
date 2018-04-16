@@ -1,0 +1,134 @@
+<!DOCTYPE HTML>
+<html lang=zh-cn>
+<head>
+<meta charset=utf-8>
+<title>滚动歌词demo</title>
+<style>
+*{margin:0px;padding:0px;}
+body{width:100%;height:100%;overflow:hidden;}
+.box{margin:100px auto 0 auto;width:400px;}
+.lrc{position:relative;width:300px;height:200px;overflow-y:auto;background-color:#ccc}
+.lrc li{display:block;padding:5px 0;}
+.z-crt{color:#0f0;}
+.ctrl{margin:0 auto;padding-left:100px;width:300px;}
+</style>
+</head>
+<body>
+	<div class="box" id="box">
+		<ul class="lrc" id="lrc">
+		</ul>
+	</div>	
+<script language="javascript">
+(function(){
+// 经解析后的歌词
+var __lis = [{"offset":500, "text":"一场游戏一场梦"},
+			{"offset":1000, "text":"演唱：王杰"},
+			{"offset":3000, "text":"不要谈什么分离"},
+			{"offset":6000, "text":"我不会因为这样而哭泣"},
+			{"offset":8000, "text":"那只是昨夜的一场梦而已"},
+			{"offset":9000, "text":"不要说愿不愿意"},
+			{"offset":12000, "text":"我不会因为这样而在意"},
+			{"offset":14000, "text":"那只是昨夜的一场游戏"},
+			{"offset":15000, "text":"那只是一场游戏一场梦"},
+			{"offset":18000, "text":"虽然你影子还出现我眼里"},
+			{"offset":24000, "text":"在我的歌声中早已没有你"},
+			{"offset":25000, "text":"只是一场游戏一场梦"},
+			{"offset":26000, "text":"不要把残缺的爱留在这里"},
+			{"offset":30000, "text":"在俩个人的世界里不该有你"},
+			{"offset":32000, "text":"oh.为什么道别离说什么在一起"},
+			{"offset":33000, "text":"如今虽然没有你我还是我自己"},
+			{"offset":35000, "text":"说什么此情永不愈"},
+			{"offset":36000, "text":"说什么我爱你"},
+			{"offset":38000, "text":"如今依然没有你我还是我自己"},
+			{"offset":39000, "text":"那只是一场游戏一场梦"},
+			{"offset":40000, "text":"虽然你影子还出现我眼里"},
+			{"offset":42000, "text":"在我的歌声中早已没有你"},
+			{"offset":44000, "text":"只是一场游戏一场梦"},
+			{"offset":46000, "text":"不要把残缺的爱留在这里"},
+			{"offset":48000, "text":"在俩个人的世界里不该有你"},
+			{"offset":50000, "text":"oh.为什么道别离说什么在一起"},
+			{"offset":52000, "text":"说什么此情永不愈"},
+			{"offset":54000, "text":"说什么我爱你"},
+			{"offset":56000, "text":"如今依然没有你我还是我自己"},
+			{"offset":58000, "text":"为什么道别离说什么在一起"},
+			{"offset":60000, "text":"如今虽然没有你我还是我自己"},
+			{"offset":62000, "text":"说什么此情永不愈"},
+			{"offset":64000, "text":"说什么我爱你"},
+			{"offset":66000, "text":"如今依然没有你我还是我自己"}];
+
+var __eul = document.getElementById("lrc");
+(function(){
+for (var i = 0; i < __lis.length; i++) {
+	var eli = document.createElement("li");
+	eli.innerHTML = __lis[i];
+	__eul.appendChild(eli);
+}
+})();
+
+var __freq = 30; // 滚动频率（ms）
+var __fraction = 2/5; // 高亮显示行在歌词显示区域中的固定位置百分比
+
+/**
+ * 当前歌词行（lineno）滚动
+ */
+var __go = function(_lineno){
+	var _time;
+	if (_lineno === 0) {
+		_time = __lis[_lineno].offset;
+	} else {
+		_time = __lis[_lineno].offset - __lis[_lineno-1].offset;
+	}
+	var _timer = setTimeout(__go.bind(this, _lineno+1), _time);
+
+	// 高亮下一行歌词
+	if (_lineno > 0) {
+		__eul.children[_lineno-1].setAttribute("class", "");
+	}
+	var _ep = __eul.children[_lineno];
+	_ep.setAttribute("class", "z-crt");
+
+	// 满足需求5，6
+	var _scrollTop;
+	if (_ep.offsetTop < __eul.clientHeight*__fraction){
+		_scrollTop = 0;
+	} else if (_ep.offsetTop > (__eul.scrollHeight - __eul.clientHeight*(1-__fraction))){
+		_scrollTop = __eul.scrollHeight - __eul.clientHeight;
+	} else {
+		_scrollTop = _ep.offsetTop - __eul.clientHeight*__fraction;
+	}
+
+	// 如用户拖动滚动条导致当前显示行超出显示区域范围，下一行直接定位到当前显示行
+	if (__eul.scrollTop > (_scrollTop + __eul.clientHeight*__fraction)
+		|| (__eul.scrollTop + __eul.clientHeight*__fraction) < _scrollTop){
+		__eul.scrollTop = _scrollTop;
+	} else { // 单行滚动
+		// 获取滚动步长
+		var _step = Math.ceil(Math.abs(__eul.scrollTop - _scrollTop)/(_time/__freq));
+		__scroll(__eul.scrollTop, _scrollTop, _step);
+	}
+
+};
+/**
+ * 歌词单行滚动实现
+ */
+__scroll = function(_crt, _dst, _step){
+	if(Math.abs(_crt - _dst) < _step){
+		return;
+	}
+	if(_crt < _dst){
+		__eul.scrollTop += _step;
+		_crt += _step;
+	} else {
+		__eul.scrollTop -= _step;
+		_crt -= _step;
+	}
+	setTimeout(__scroll.bind(this, _crt, _dst, _step), __freq);
+};
+
+__go(0);
+
+})();
+</script>
+</body>
+</html>
+

@@ -2,9 +2,35 @@
  * Created by 延松松松松 on 2018/4/8.
  */
 window.onload=function () {
+
+
     var song_list_div =  document.getElementsByClassName("song_list");
     song_list_div[1].style.display = "none";
     song_list_div[2].style.display = "none";
+
+
+    function parseLyric(lrc) {
+        var lyrics = lrc.split("\n");
+        for (var value in lyrics){
+//            console.log(value)
+        }
+        var lrcObj = {};
+        for(var i=0;i<lyrics.length;i++){
+            var lyric = decodeURIComponent(lyrics[i]);
+            var timeReg = /\[\d*:\d*((\.|\:)\d*)*\]/g;
+            var timeRegExpArr = lyric.match(timeReg);
+            if(!timeRegExpArr)continue;
+            var clause = lyric.replace(timeReg,'');
+            for(var k = 0,h = timeRegExpArr.length;k < h;k++) {
+                var t = timeRegExpArr[k];
+                var min = Number(String(t.match(/\[\d*/i)).slice(1)),
+                    sec = Number(String(t.match(/\:\d*/i)).slice(1));
+                var time = min * 60 + sec;
+                lrcObj[time] = clause;
+            }
+        }
+        return lrcObj;
+    }
 
     var vm = new  Vue({
         el:"#main_body",
@@ -73,6 +99,8 @@ window.onload=function () {
                 }
             },
             play:function () {
+
+                document.getElementById("select_speed").value = "正常";
                 // console.log(event.target.getAttribute("numb"));
                 console.log("当前int"+ vm.int_time);
                 // window.clearInterval(vm.int_time);
@@ -87,7 +115,7 @@ window.onload=function () {
                 playIcon.classList.remove("glyphicon-play");
                 playIcon.classList.add("glyphicon-pause");
 
-
+                // vm.ShowLrc(vm.all_songs[index].name);
 
                 // this.duration  = this.player.duration
             //    下面是获取播放时间
@@ -155,6 +183,8 @@ window.onload=function () {
             },
             nextSong:function () {
                 // window.clearInterval(vm.int_time);
+                document.getElementById("select_speed").value = "正常";
+
                 console.log(this.songindex);
                 this.songindex = ++this.songindex%this.all_songs.length;
 
@@ -169,6 +199,8 @@ window.onload=function () {
             },
             lastSong:function () {
                 window.clearInterval(vm.int_time);
+                document.getElementById("select_speed").value = "正常";
+
                 console.log("切换前index为"+this.songindex);
                 this.songindex = --this.songindex;
                 console.log("切换后index为"+this.songindex);
@@ -227,17 +259,47 @@ window.onload=function () {
                 }
                 // alert(option);
                 vm.player.playbackRate = speed;
+            },
+            //下面的方法是用来解析歌词并且显示当前歌曲的歌词
+            ShowLrc:function (url) {
+                //首先需要清空当前ul的内容
+                // document.getElementById("lrc_list").innerHTML = "";
+                $.ajax({
+                    url:"lrc/"+url+".lrc",
+                    success:function (lrc) {
+        //        console.log(lrc);
+                        var p = parseLyric(lrc);
+
+                        for(var a = 0;a<50;a++) {
+
+//            console.log(typeof (lrc[1]));
+                            if (typeof (lrc[a]) == "undefined") {
+//                alert(1);
+                                continue;
+                            }
+                            var li = document.createElement("li");
+                            li.innerText = lrc[a];
+//                console.log(li);
+
+                            document.getElementById("138test").appendChild(li);
+                            // console.log(li);
+                        }
+
+                    }
+                })
             }
 
-
         }
-
     });
+
+
 
 
     // $("#test").click =function () {
     //     $("#like_songlist").fadeToggle("slow");
     // }
+
+
 
 
 };

@@ -7,64 +7,182 @@
 <script src="js/jquery-1.12.3.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/VueJs.js"></script>
-<script>
-    window.onload = function () {
-        var media = $('#media')[0];
-        var audioTimer = null;
-
-//绑定播放暂停控制
-        $('.play').bind('click', function() {
-            playAudio();
-        });
-
-//播放暂停切换
-        function playAudio() {
-            if(media.paused) {
-                play();
-            } else {
-                pause();
-            }
-        }
-
-//播放
-        function play() {
-            media.play();
-            $('#play').html('Pause');
-        }
-
-//暂停
-        function pause() {
-            media.pause();
-            $('#play').html('Play');
-        }
-        myVid=document.getElementById("media");
-//        alert(myVid.duration);
+<style>
+    #gc{
+        width: 400px;
+        height: 400px;
+        background: transparent;
+        margin: 100px auto;
+        color: #fff;
+        font-size: 18px;
+        overflow: hidden;
+        position: relative;
     }
-</script>
+    #gc ul{
+        position: absolute;
+        top: 200px;
+    }
+    #gc ul li{
+        text-align: center;
+        height: 40px;
+        line-height: 40px;
+    }
+    .songs_cnt{
+        float: left;
+        margin-top: 200px;
+        position: relative;
+    }
+    .songs_list{
+        background-color: rgba(0,0,0,.2);
+        border-radius: 5px;
+        float: left;
+        width: 250px;
+        padding: 15px;
+        margin-left: -280px;
+    }
+    .songs_list li{
+        height: 40px;
+        line-height: 40px;
+        font-size: 16px;
+        color: rgba(255,255,255,.8);
+        cursor: pointer;
+    }
+    .songs_list li:hover{
+        font-size: 20px;
+        color: rgba(255,23,140,.6);
+    }
+    .sel_song{
+        position: absolute;
+        top: 50%;
+        width: 40px;
+        height: 80px;
+        margin-top: -40px;
+        font-size: 16px;
+        text-align: center;
+        background-color: transparent;
+        border: 1px solid #2DCB70;
+        font-weight: bold;
+        cursor: pointer;
+        border-radius: 3px;
+        font-family: sans-serif;
+        transition:all 2s;
+        -moz-transition:all 2s;
+        -webkit-transition:all 2s;
+        -o-transition:all 2s;
+    }
+    .sel_song:hover{
+        color: #fff;
+        background-color: #2DCB70;
+    }
+    .songs_list li.active{
+        color: #f00;
+    }
+</style>
 <body>
-<div id="audioControl">
-    <div class="play">
-        <span id="play">Play</span>
-    </div>
+<div class="songs_cnt">
+    <ul class="songs_list">
+        <li>What are Words</li>
+        <li>红玫瑰</li>
+    </ul>
+    <button class="sel_song">点<br/><br/>我</button>
 </div>
-<audio controls="true" id="media"   onplay="this.currentTime=5" autoplay src="mp3/红玫瑰.mp3" ></audio>
+<div id="gc">
+    <ul></ul>
+</div>
+<!--<audio src="mp3/What%20Are%20Words.mp3" id="aud" autoplay="autoplay" controls="controls" preload="auto">-->
+    <!--您的浏览器不支持audio属性，请更换浏览器在进行浏览。-->
+<!--</audio>-->
 
 </body>
 <script>
-    $(audio).on('loadedmetadata', function() {
-        audio.pause();
-        // 进度条控制
-        $(document).on('touchend', '.timeline', function(e) {
-//            var x = e.originalEvent.changedTouches[0].clientX - this.offsetLeft;
-//            var X = x < 0 ? 0 : x;
-//            var W = $(this).width();
-//            var place = X > W ? W : X;
-            audio.currentTime = 6;
-//            $(this).children().css({
-//                width: (place / W).toFixed(2) * 100 + "%"
-//            })
-            audio.pause();
-        })
+    //歌词同步部分
+    function parseLyric(text) {
+//将文本分隔成一行一行，存入数组
+        var lines = text.split('\n'),
+//用于匹配时间的正则表达式，匹配的结果类似[xx:xx.xx]
+            pattern = /\[\d{2}:\d{2}.\d{2}\]/g,
+//保存最终结果的数组
+            result = [];
+//去掉不含时间的行
+        while (!pattern.test(lines[0])) {
+            lineslines = lines.slice(1);
+        };
+//上面用'\n'生成生成数组时，结果中最后一个为空元素，这里将去掉
+        lines[lines.length - 1].length === 0 && lines.pop();
+        lines.forEach(function(v /*数组元素值*/ , i /*元素索引*/ , a /*数组本身*/ ) {
+//提取出时间[xx:xx.xx]
+            var time = v.match(pattern),
+//提取歌词
+                vvalue = v.replace(pattern, '');
+//因为一行里面可能有多个时间，所以time有可能是[xx:xx.xx][xx:xx.xx][xx:xx.xx]的形式，需要进一步分隔
+            time.forEach(function(v1, i1, a1) {
+//去掉时间里的中括号得到xx:xx.xx
+                var t = v1.slice(1, -1).split(':');
+//将结果压入最终数组
+                result.push([parseInt(t[0], 10) * 60 + parseFloat(t[1]), value]);
+            });
+        });
+//最后将结果数组中的元素按时间大小排序，以便保存之后正常显示歌词
+        result.sort(function(a, b) {
+            return a[0] - b[0];
+        });
+        return result;
+    }
+
+    function fn(sgname){
+        $.get('lrc/'+sgname+'.lrc',function(data){
+            var str=parseLyric(data);
+            for(var i=0,li;i<str.length;i++){
+                li=$('<li>'+str[i][1]+'</li>');
+                $('#gc ul').append(li);
+            }
+            $('#aud')[0].ontimeupdate=function(){//视屏 音频当前的播放位置发生改变时触发
+                for (var i = 0, l = str.length; i < l; i++) {
+                    if (this.currentTime /*当前播放的时间*/ > str[i][0]) {
+//显示到页面
+                        $('#gc ul').css('top',-i*40+200+'px'); //让歌词向上移动
+                        $('#gc ul li').css('color','#fff');
+                        $('#gc ul li:nth-child('+(i+1)+')').css('color','red'); //高亮显示当前播放的哪一句歌词
+                    }
+                }
+                if(this.ended){ //判断当前播放的音乐是否播放完毕
+                    var songslen=$('.songs_list li').length;
+                    for(var i= 0,val;i<songslen;i++){
+                        val=$('.songs_list li:nth-child('+(i+1)+')').text();
+                        if(val==sgname){
+                            i=(i==(songslen-1))?1:i+2;
+                            sgname=$('.songs_list li:nth-child('+i+')').text(); //音乐播放完毕之后切换下一首音乐
+                            $('#gc ul').empty(); //清空歌词
+                            $('#aud').attr('src','music/'+sgname+'.mp3');
+                            fn(sgname);
+                            return;
+                        }
+                    }
+                }
+            };
+        });
+    } fn($('.songs_list li:nth-child(1)').text());
+
+    $('.songs_list li:nth-child(1)').addClass('active');
+    $('.songs_cnt').mouseenter(function () {
+        var e=event||window.event;
+        var tag= e.target||e.srcElement;
+        if(tag.nodeName=='BUTTON'){
+            $('.songs_list').animate({'marginLeft':'0px'},'slow');
+        }
+    });
+    $('.songs_cnt').mouseleave(function () {
+        $('.songs_list').animate({'marginLeft':'-280px'},'slow');
+    });
+    $('.songs_list li').each(function () {
+        $(this).click(function () {
+            $('#aud').attr('src','music/'+$(this).text()+'.mp3');
+            $('#gc ul').empty();
+            fn($(this).text());
+            $('.songs_list li').removeClass('active');
+            $(this).addClass('active');
+        });
+    })
 
 </script>
 </html>
