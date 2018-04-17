@@ -78,3 +78,6 @@ input[type="range"]::-webkit-slider-thumb {
     padding: 4px 12px;
     margin-right: 10px;
 }
+.current_li{
+    background-color: pink;
+}

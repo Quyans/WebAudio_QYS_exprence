@@ -53,7 +53,8 @@ window.onload=function () {
             music_volume:0,
             song_title:null,
             playbackRate:1,
-
+            count : 0,
+            lrc_json:{},
 
             int_voice:0,
             int_time:2
@@ -112,7 +113,9 @@ window.onload=function () {
                 vm.songindex = index;
 
                 //下面这个方法调用了显示歌词的调用
-                vm.ShowLrc(vm.song_title);
+
+
+
 
 
                 event.target.setAttribute("state_Play","1");
@@ -126,24 +129,42 @@ window.onload=function () {
                 var b = vm.player;
                 //由于音乐需要加载 所以必须等到 canplay 才能获取到duration
                 b.addEventListener("canplay",function () {
-                    console.log(vm.int_time);
+
+                    // console.log(vm.int_time);
 
                     var bt = b.duration;
                     console.log(bt);
                     vm.duration_ZhunQue = bt;
                     vm.duration =Math.floor(bt/60)+":"+(bt%60/100).toFixed(2).slice(-2);
                     // console.log(vm.duration);
+
+
+                    //加载当前歌曲的歌词
+
+                    console.log(vm.player.duration);
+                    vm.ShowLrc(vm.song_title,vm.player.duration);
+
+                    var Lrc_list = document.getElementById("lrc_list").children;
+                    console.log(Lrc_list);
                     vm.int_time = setInterval(function () {
-                         console.log("setInterval之后 的int是"+vm.int_time)
                         vm.AutoChangeMusic_volumn(b,bt);
+
+                        vm.changeCur_Lrc(Lrc_list,vm.lrc_json,parseInt(vm.player.currentTime));
+                        // console.log(parseInt(vm.player.currentTime))
+                        // console.log(Lrc_list)
+                        console.log("count"+vm.count);
                         // console.log(ct+","+vm.currentTime)
+
+                        // console.log("setInterval之后 的int是"+vm.int_time)
                     },1000);
+
 
                     // window.clearInterval(vm.int_time);
 
                     //**************监听 int_time 当他发生变化的时候（即切歌） clearInterval 之前的
                     vm.$watch("int_time",function () {
                         window.clearInterval(vm.int_time);
+                        vm.count = 0;
                     })
                     // window.clearInterval(vm.int_time);
                 })
@@ -193,7 +214,9 @@ window.onload=function () {
                 this.songindex = ++this.songindex%this.all_songs.length;
 
                 this.player.src = "mp3/"+vm.all_songs[this.songindex].name+".mp3";
-                console.log(this.songindex);
+
+                vm.song_title = vm.all_songs[this.songindex].name
+
                 this.player.play();
                 if (this.songindex!=0){
                     document.getElementById("lastsong_btn").classList.remove("disabled");
@@ -209,6 +232,8 @@ window.onload=function () {
                 this.songindex = --this.songindex;
                 console.log("切换后index为"+this.songindex);
                 this.player.src = "mp3/"+vm.all_songs[this.songindex].name+".mp3";
+                vm.song_title = vm.all_songs[this.songindex].name
+
                 this.player.play();
                 if (this.songindex==0){
                     document.getElementById("lastsong_btn").classList.add("disabled");
@@ -264,24 +289,24 @@ window.onload=function () {
                 // alert(option);
                 vm.player.playbackRate = speed;
             },
+
+
+
+
+
             //下面的方法是用来解析歌词并且显示当前歌曲的歌词
-            ShowLrc:function (url) {
+            ShowLrc:function (url,player_duration) {
                 //首先需要清空当前ul的内容
                 document.getElementById("lrc_list").innerHTML = "";
                 $.ajax({
                     url:"lrc/"+url+".lrc",
                     success:function (lrc) {
-//        console.log(lrc);
                         var p = parseLyric(lrc)
                         lrc = p;
-//        console.log(p) ;
-//        console.log(p[16]);
-//        console.log(p[1])
-//        console.log(typeof (p[1]))
+                        vm.lrc_json = p;   //把当前歌曲的json复制出来
 
-
-
-                        for(var a = 0;a<360;a++) {
+                        //parseInt是为了让duration 变为int类型
+                        for(var a = 0;a<parseInt(player_duration);a++) {
 
 //            console.log(typeof (lrc[1]));
                             if (typeof (lrc[a]) == "undefined") {
@@ -290,29 +315,36 @@ window.onload=function () {
                             }
                             var ul =document.getElementById("lrc_list")
                             var li = document.createElement("li");
+                            li.classList.add("lrc_li")
                             li.innerText = lrc[a];
 //                console.log(li);
-
                             ul.appendChild(li);
-
                         }
                     }
                 })
+            },
+        //    下面的方法是实现歌词滚动并且将当前句的歌词标记出来
+            changeCur_Lrc:function (sentence_list,lrc_json,currentTime ) {
+                   //这个count记录当前歌词 是整个歌词文档的第几句
+                var index = vm.count;
+                if (index==0){
+                    if (typeof lrc_json[currentTime] != "undefined" ){
+                        sentence_list[index].classList.add("current_li")
+
+                        vm.count++;
+                    }
+                }
+                if (index>0){
+                    if (typeof lrc_json[currentTime] != "undefined" ){
+                        sentence_list[index].classList.add("current_li")
+                        sentence_list[index-1].classList.remove("current_li")
+                        vm.count++;
+                    }
+
+                }
 
 
-                var li  = document.createElement("LI");
-                var textnode= document.createTextNode("123");
-                li.appendChild(textnode);
-                document.getElementById("myList").appendChild(li);
-                console.log(li);
-
-
-                var node=document.createElement("LI");
-                var textnode=document.createTextNode("Water");
-                node.appendChild(textnode);
-                document.getElementById("myList").appendChild(node);
             }
-
         }
     });
 

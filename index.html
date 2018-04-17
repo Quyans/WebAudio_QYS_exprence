@@ -72,12 +72,16 @@
 
             <!--这里是播放器界面-->
             <div class="col-md-9">
-                <div class="">
+                <div class="" style="height: 450px;">
                     <div class="col-xs-4 margin_center"style="text-align: center" >
                         <span v-text="song_title"  class="h3" ></span>
                     </div>
-                    <div class="col-xs-8 " style="height: 320px;">
-                        <ul id="lrc_list"></ul>
+                    <div class="col-xs-8 " >
+
+                        <!--下面的ul是歌词的位置-->
+                        <ul id="lrc_list" class=""  style="overflow-y:auto; overflow-x:auto; width:400px; height:400px;">
+
+                        </ul>
 
 
 
