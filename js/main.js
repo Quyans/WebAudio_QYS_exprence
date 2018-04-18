@@ -55,6 +55,7 @@ window.onload=function () {
             playbackRate:1,
             count : 0,
             lrc_json:{},
+            Lrc_list:{},
 
             int_voice:0,
             int_time:2
@@ -116,8 +117,6 @@ window.onload=function () {
 
 
 
-
-
                 event.target.setAttribute("state_Play","1");
                 playIcon.classList.remove("glyphicon-play");
                 playIcon.classList.add("glyphicon-pause");
@@ -144,8 +143,11 @@ window.onload=function () {
                     console.log(vm.player.duration);
                     vm.ShowLrc(vm.song_title,vm.player.duration);
 
-                    var Lrc_list = document.getElementById("lrc_list").children;
-                    console.log(Lrc_list);
+                    vm.Lrc_list = document.getElementById("lrc_list").children;
+                    var Lrc_list = vm.Lrc_list;
+                    // console.log(Lrc_list);
+
+                    vm.count = 0;
                     vm.int_time = setInterval(function () {
                         vm.AutoChangeMusic_volumn(b,bt);
 
@@ -164,7 +166,7 @@ window.onload=function () {
                     //**************监听 int_time 当他发生变化的时候（即切歌） clearInterval 之前的
                     vm.$watch("int_time",function () {
                         window.clearInterval(vm.int_time);
-                        vm.count = 0;
+
                     })
                     // window.clearInterval(vm.int_time);
                 })
@@ -175,7 +177,7 @@ window.onload=function () {
                 console.log( ","+ vm.int_time) ;
                 vm.currentTime = Math.floor(ct/60)+":"+(ct%60/100).toFixed(2).slice(-2);
                 vm.music_volume = (ct/bt)*100;
-                console.log("被除数duration为"+ bt);
+                // console.log("被除数duration为"+ bt);
             },
             changePlayOrPause:function () {
                 // window.clearInterval(vm.int_time);
@@ -208,6 +210,7 @@ window.onload=function () {
             },
             nextSong:function () {
                 // window.clearInterval(vm.int_time);
+                vm.count = 0;         //把count计数初始化为0
                 document.getElementById("select_speed").value = "正常";
 
                 console.log(this.songindex);
@@ -225,6 +228,7 @@ window.onload=function () {
                 }
             },
             lastSong:function () {
+                vm.count = 0;         //把count计数初始化为0
                 window.clearInterval(vm.int_time);
                 document.getElementById("select_speed").value = "正常";
 
@@ -304,7 +308,7 @@ window.onload=function () {
                         var p = parseLyric(lrc)
                         lrc = p;
                         vm.lrc_json = p;   //把当前歌曲的json复制出来
-
+                        console.log(p);
                         //parseInt是为了让duration 变为int类型
                         for(var a = 0;a<parseInt(player_duration);a++) {
 
@@ -315,6 +319,7 @@ window.onload=function () {
                             }
                             var ul =document.getElementById("lrc_list")
                             var li = document.createElement("li");
+
                             li.classList.add("lrc_li")
                             li.innerText = lrc[a];
 //                console.log(li);
@@ -342,9 +347,34 @@ window.onload=function () {
                     }
 
                 }
-
-
-            }
+            },
+            // changeCurrentLrc_afterChangeMusic_volume:function () {
+            //     // alert(123);
+            //
+            //     // console.log(vm.lrc_json.length);
+            //     var interval =  setInterval(function () {
+            //         var current = parseInt(vm.player.currentTime) ;
+            //     // console.log(vm.Lrc_list);
+            //     // console.log(vm.Lrc_list[4].innerText);
+            //     // console.log(typeof (vm.Lrc_list[1].innerText));
+            //         for (var index = 0;index<vm.Lrc_list.length;index++)
+            //         {
+            //             // console.log("vm.Lrc_list[index]:"+vm.Lrc_list[index].innerText+",*********       "+"vm.lrc_json[current]:"+vm.lrc_json[current]);
+            //             // if (vm)
+            //             if (typeof (vm.lrc_json[index])!="undefined"){
+            //                 if (vm.Lrc_list[index].innerHTML === vm.lrc_json[current]){
+            //
+            //                     vm.count = index;
+            //                     window.clearInterval(interval);
+            //                     console.log("我停止了")
+            //                 }
+            //             }
+            //
+            //         }
+            //         console.log("我在试着改变当前count")
+            //     },1000)
+            //
+            // }
         }
     });
 

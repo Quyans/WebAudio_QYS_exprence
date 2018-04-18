@@ -112,10 +112,13 @@
                         <button id="nextsong_btn" class="btn btn-info" @click = "nextSong()"><span class="glyphicon glyphicon-fast-forward"></span></button>
                     </div>
 
-                    <input id="SongRange" type="range" @change = "change_music_volume()" :value="music_volume">
+                    <input id="SongRange" type="range" @change = "change_music_volume()"  :value="music_volume">
                     <p class="label label-primary" style="display: inline-block;font-size: small"><span >{{currentTime}}</span><span>/</span><span >{{duration}}</span></p>
                     &nbsp;
+
                     <input id="voiceRange" @mousedown = "chageVoice_volume_setInterval()" @mouseup = "chageVoice_volume_clearInterval()" type="range"  style="width: 15%">
+                    &nbsp;
+                    <span class="glyphicon glyphicon-volume-up" style="color: #5bc0de; font-size: large"> </span>
 
                     <audio id="media" src=""   loop="loop" ></audio>
 
